@@ -8,9 +8,9 @@
     catkin_make
     ```
 
-4.setup can ```  
+4.setup can with```  
     sudo bash ./setup_can.sh can0 500000
-    ```
+    ```,then check for output with``` candump can0``` 
 
 5.startup roscore
 
