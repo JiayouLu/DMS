@@ -21,17 +21,20 @@ def talker():
     pub = rospy.Publisher('chatter', String, queue_size=10)
     rospy.init_node('talker', anonymous=True)
     rate = rospy.Rate(10) # 10hz
-
+    
+    # create a bus instance
+    # many other interfaces are supported as well (see below)
     bus = can.Bus(interface='socketcan',
               channel='can0',
               receive_own_messages=True)
-
+    # send a message
     message = can.Message(arbitration_id=123, is_extended_id=True,
                       data=[0x11, 0x22, 0x33])
     
     bus.send(message, timeout=0.2)
 
     while not rospy.is_shutdown():
+        # iterate over received messages
         for msg in bus:
             if msg.arbitration_id == 1921:
                 binary_num = "{:08b}".format(msg.data[0])[4:]
@@ -40,14 +43,6 @@ def talker():
                 rospy.loginfo(fatigue_info)
                 pub.publish(fatigue_info)
                 rate.sleep()
-    # for msg in bus:
-    #     if msg.arbitration_id == 1921:
-    #         binary_num = "{:08b}".format(msg.data[0])[4:]
-    #         coding = binary_to_T(binary_num)
-    #         fatigue_info = fatigue_warning(str(coding))
-    #         rospy.loginfo(fatigue_info)
-    #         pub.publish(fatigue_info)
-    #         rate.sleep()
 
 if __name__ == '__main__':
     try:
